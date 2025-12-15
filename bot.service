@@ -1,0 +1,67 @@
+[Unit]
+Description=Truth or Dare Telegram Bot
+After=network.target
+After=redis-server.service
+Wants=redis-server.service
+Requires=redis-server.service
+
+[Service]
+Type=simple
+User=botuser
+Group=botuser
+WorkingDirectory=/home/botuser/truth_or_dare_bot
+Environment="PATH=/home/botuser/truth_or_dare_bot/venv/bin"
+Environment="PYTHONPATH=/home/botuser/truth_or_dare_bot"
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/home/botuser/truth_or_dare_bot/venv/bin/python /home/botuser/truth_or_dare_bot/bot.py
+Restart=always
+RestartSec=10
+StartLimitInterval=60
+StartLimitBurst=5
+
+# Логирование
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=truth-or-dare-bot
+SyslogFacility=daemon
+
+# Защита и безопасность
+NoNewPrivileges=true
+ProtectSystem=strict
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=true
+RestrictRealtime=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+SystemCallArchitectures=native
+LockPersonality=true
+
+# Ограничение ресурсов
+CPUQuota=200%
+MemoryLimit=512M
+MemorySwapMax=0
+LimitNOFILE=65536
+LimitNPROC=256
+
+# Разрешенные пути для записи
+ReadWritePaths=/home/botuser/truth_or_dare_bot/data
+ReadWritePaths=/home/botuser/truth_or_dare_bot/logs
+ReadOnlyPaths=/
+
+# Запрещенные операции
+CapabilityBoundingSet=
+AmbientCapabilities=
+PrivateUsers=false
+
+# Таймауты
+TimeoutStartSec=300
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
